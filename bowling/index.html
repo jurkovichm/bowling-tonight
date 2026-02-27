@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Bowling?" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Bowling Tonight?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .card {
+      background: #16213e;
+      border: 2px solid #0f3460;
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 10;
+    }
+
+    .bowling-ball {
+      font-size: 64px;
+      margin-bottom: 16px;
+      display: block;
+      animation: wobble 2s ease-in-out infinite;
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    h1 {
+      color: #e2e8f0;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 32px;
+      line-height: 1.3;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    button {
+      flex: 1;
+      padding: 16px 0;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:active { transform: scale(0.95); }
+
+    #btn-yes {
+      background: #e94560;
+      color: white;
+      box-shadow: 0 4px 20px rgba(233, 69, 96, 0.4);
+    }
+
+    #btn-no {
+      background: #0f3460;
+      color: #a0aec0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .result {
+      margin-top: 24px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      min-height: 28px;
+      transition: opacity 0.3s;
+      color: #e2e8f0;
+    }
+
+    /* Raining emojis */
+    .drop {
+      position: fixed;
+      top: -80px;
+      pointer-events: none;
+      animation: fall linear forwards;
+      z-index: 5;
+      line-height: 1;
+    }
+
+    @keyframes fall {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+      80%  { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <span class="bowling-ball">🎳</span>
+    <h1>Are you bowling tonight?</h1>
+    <div class="buttons">
+      <button id="btn-yes" onclick="answer(true)">Yes!</button>
+      <button id="btn-no"  onclick="answer(false)">No...</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const YES_EMOJI = '🍔';
+    const NO_EMOJI  = '😢';
+
+    function answer(isYes) {
+      const result = document.getElementById('result');
+      if (isYes) {
+        result.textContent = "LET'S GOOO! 🎳🎉";
+        startRain(YES_EMOJI, 40);
+      } else {
+        result.textContent = "Aww, next time...";
+        startRain(NO_EMOJI, 35);
+      }
+    }
+
+    function startRain(emoji, count) {
+      // Clear any existing drops
+      document.querySelectorAll('.drop').forEach(d => d.remove());
+
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => spawnDrop(emoji), i * 80);
+      }
+    }
+
+    function spawnDrop(emoji) {
+      const el = document.createElement('div');
+      el.className = 'drop';
+      el.textContent = emoji;
+
+      const size = Math.random() * 30 + 28; // 28–58px
+      const duration = Math.random() * 1.8 + 1.2; // 1.2–3s
+      const xPos = Math.random() * 100; // 0–100vw
+
+      el.style.fontSize      = size + 'px';
+      el.style.left          = xPos + 'vw';
+      el.style.animationDuration = duration + 's';
+
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  </script>
+
+</body>
+</html>
